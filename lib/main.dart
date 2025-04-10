@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/qr_scanner_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,27 +8,27 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // このウィジェットはアプリケーションのルートとなります
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
+        // これはあなたのアプリケーションのテーマです
         //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
+        // 試してみましょう：アプリケーションを "flutter run" で実行してみてください。
+        // アプリケーションの上部バーが紫色になっているのが確認できます。
+        // アプリを終了せずに、以下のcolorSchemeのseedColorをColors.greenに
+        // 変更して、"ホットリロード"を実行してみてください
+        //（Flutter対応のIDEで変更を保存するか"ホットリロード"ボタンを押すか、
+        // コマンドラインでアプリを起動した場合は"r"を押してください）。
         //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
+        // カウンターが0にリセットされないことに注目してください。
+        // アプリケーションの状態はリロード中も失われません。
+        // 状態をリセットするには、代わりにホットリスタートを使用してください。
         //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+        // これは値だけでなく、コードの変更にも適用されます：
+        // ほとんどのコードの変更はホットリロードだけでテストできます。
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -38,14 +39,13 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  // このウィジェットはアプリケーションのホームページです。
+  // これはStatefulです。つまり、見た目に影響を与えるフィールドを含む
+  // Stateオブジェクト（以下で定義）を持っているということです。
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  // このクラスは状態の設定を行います。親（この場合はAppウィジェット）から
+  // 提供された値（この場合はtitle）を保持し、それはStateのbuildメソッドで
+  // 使用されます。Widgetサブクラスのフィールドは常に"final"とマークされます。
 
   final String title;
 
@@ -55,53 +55,88 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
+      // setStateを呼び出すことで、このStateで何かが変更されたことを
+      // Flutterフレームワークに伝えます。これにより、下のbuildメソッドが
+      // 再実行され、表示が更新された値を反映します。もしsetState()を
+      // 呼び出さずに_counterを変更した場合、buildメソッドは再度呼び出されず、
+      // 何も変化が起きないように見えます。
       _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
+    // このメソッドは、setStateが呼び出されるたびに再実行されます。
+    // 例えば、上記の_incrementCounterメソッドによって呼び出されます。
     //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // Flutterフレームワークは、buildメソッドの再実行を最適化するように設計されています。
+    // そのため、個々のウィジェットのインスタンスを個別に変更する必要はなく、
+    // 更新が必要なものを再構築するだけで済みます。
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: const Text(
+                'メニュー',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('ホーム'),
+              onTap: () {
+                Navigator.pop(context); // Drawerを閉じる
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.qr_code),
+              title: const Text('QRコード'),
+              onTap: () {
+                // 一旦ドロワーを閉じる
+                Navigator.pop(context);
+                // QRスキャナー画面に遷移
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QRScannerScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+        // Centerはレイアウトウィジェットです。単一の子要素を受け取り、
+        // 親の中央に配置します。
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
+          // Columnもレイアウトウィジェットです。子要素のリストを受け取り、
+          // それらを垂直に配置します。デフォルトでは、水平方向に子要素に
+          // フィットするようにサイズを調整し、親の高さいっぱいに広がろうとします。
           //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
+          // Columnには、サイズ調整方法や子要素の配置方法を制御するための
+          // さまざまなプロパティがあります。ここではmainAxisAlignmentを使用して
+          // 子要素を垂直方向に中央揃えにしています。Columnは垂直なので、
+          // メイン軸は垂直軸です（クロス軸は水平軸になります）。
           //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
+          // 試してみましょう：「デバッグペイント」を有効にしてみてください
+          //（IDEで「Toggle Debug Paint」アクションを選択するか、
+          // コンソールで「p」を押します）。各ウィジェットのワイヤーフレームが
+          // 表示されます。
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
@@ -116,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), // この末尾のカンマは、buildメソッドの自動フォーマットを見やすくします。
     );
   }
 }
